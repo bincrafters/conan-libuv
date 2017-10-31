@@ -46,7 +46,7 @@ class LibuvConan(ConanFile):
 
     def package(self):
         self.copy(pattern="LICENSE", dst=".", src=path.join(self.root, "LICENSE"))
-        include_dir = self.root if self.settings.os == "Windows" else self.install_dir
+        include_dir = self.install_dir if self.settings.os == "Linux" else self.root
         self.copy(pattern="*.h", dst="include", src=path.join(include_dir, "include"))
         if self.settings.os == "Linux":
             self.copy(pattern="*.pc", dst="res", src=path.join(self.install_dir, "lib"))
@@ -65,7 +65,6 @@ class LibuvConan(ConanFile):
                 self.copy(pattern="*.lib", dst="lib", src=path.join(self.root, str(self.settings.build_type), "lib"), keep_path=False)
             else:
                 self.copy(pattern="*.a", dst="lib", src=path.join(self.install_dir, "lib"), keep_path=False)
-
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)

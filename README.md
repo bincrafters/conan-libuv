@@ -2,7 +2,7 @@
 
 [![Bintray Download](https://api.bintray.com/packages/bincrafters/public-conan/libwesockets%3Abincrafters/images/download.svg?version=1.15.0%3Astable) ](https://bintray.com/bincrafters/public-conan/libwesockets%3Abincrafters/1.15.0%3Astable/link)
 [![Travis Build Status](https://travis-ci.org/bincrafters/conan-libuv.svg?branch=stable%2F1.15.0)](https://travis-ci.org/bincrafters/conan-libuv)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/g8ni02142dt3uo2b?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-libuv)
+[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/cfan66fpf21h1o4h?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-libuv)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://shields.io/)
 
 [Conan.io](https://conan.io) package for [libuv](https://github.com/libuv/libuv) project
