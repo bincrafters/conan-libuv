@@ -49,4 +49,6 @@ class LibuvConan(ConanFile):
             self.copy(pattern="*.lib", dst="lib", src="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs =  tools.collect_libs(self)
+        self.cpp_info.libs = tools.collect_libs(self)
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.append("pthread")
