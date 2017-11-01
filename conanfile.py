@@ -19,6 +19,8 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        if self.settings.os == "Macos":
+            self.options.shared = False
 
     def source(self):
         source_url = "https://github.com/libuv/libuv"
@@ -49,7 +51,7 @@ class LibuvConan(ConanFile):
         self.copy(pattern="LICENSE", dst=".", src=path.join(self.root, "LICENSE"))
         include_dir = self.install_dir if self.settings.os == "Linux" else self.root
         self.copy(pattern="*.h", dst="include", src=path.join(include_dir, "include"))
-        if self.settings.os == "Linux":
+        if self.settings.os != "Windows":
             self.copy(pattern="*.pc", dst="res", src=path.join(self.install_dir, "lib"))
             self.copy(pattern="*.la", dst="lib", src=path.join(self.install_dir, "lib"), keep_path=False)
         if self.options.shared:
