@@ -19,8 +19,6 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
-        if self.settings.os == "Macos":
-            self.options.shared = False
 
     def source(self):
         source_url = "https://github.com/libuv/libuv"
@@ -42,6 +40,7 @@ class LibuvConan(ConanFile):
             with tools.chdir(self.root):
                 self.run("./autogen.sh")
                 configure_args = ['--prefix=%s' % self.install_dir]
+                configure_args.append("--enable-shared" if self.options.shared else "--disable-shared")
                 env_build.configure(args=configure_args)
                 env_build.fpic = True
                 env_build.make(args=["all"])
