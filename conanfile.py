@@ -28,6 +28,7 @@ class LibuvConan(ConanFile):
         if self.settings.os == "Windows":
             with tools.chdir(self.root):
                 tools.replace_in_file("vcbuild.bat", ":run", "exit /b 0")
+                tools.replace_in_file("vcbuild.bat", "set target=Build", "set target=libuv")
                 vcbuild_args = [str(self.settings.build_type).lower()]
                 vcbuild_args.append("x64" if self.settings.arch == "x86_64" else "x86")
                 vcbuild_args.append("shared" if self.options.shared else "static")
