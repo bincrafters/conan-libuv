@@ -49,28 +49,6 @@ class LibuvConan(ConanFile):
                 self.run('python gyp_uv.py -f ninja -Dtarget_arch=%s -Duv_library=%s' % (target_arch, uv_library))
                 self.run('ninja -C out/%s' % self.settings.build_type)
 
-    def build_old(self):
-        if self.settings.os == "Windows":
-            with tools.chdir(self.root):
-                tools.replace_in_file("vcbuild.bat", ":run", "exit /b 0")
-                tools.replace_in_file("vcbuild.bat", "set target=Build", "set target=libuv")
-                vcbuild_args = [str(self.settings.build_type).lower()]
-                vcbuild_args.append("x64" if self.settings.arch == "x86_64" else "x86")
-                vcbuild_args.append("shared" if self.options.shared else "static")
-                if self.options["compiler"].version == "15":
-                    vcbuild_args.append("vs2017")
-                self.run("vcbuild.bat %s" % ' '.join(vcbuild_args))
-        else:
-            env_build = AutoToolsBuildEnvironment(self)
-            with tools.chdir(self.root):
-                self.run("./autogen.sh")
-                configure_args = ['--prefix=%s' % self.install_dir]
-                configure_args.append("--enable-shared" if self.options.shared else "--disable-shared")
-                env_build.configure(args=configure_args)
-                env_build.fpic = True
-                env_build.make(args=["all"])
-                env_build.make(args=["install"])
-
     def package(self):
         self.copy(pattern="*.h", dst="include", src=os.path.join(self.root, 'include'))
         bin_dir = os.path.join(self.root, 'out', str(self.settings.build_type))
@@ -78,28 +56,6 @@ class LibuvConan(ConanFile):
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
             self.copy(pattern="*.lib", dst="lib", src=bin_dir, keep_path=False)
-
-    def package_old(self):
-        self.copy(pattern="LICENSE", dst=".", src=os.path.join(self.root, "LICENSE"))
-        include_dir = self.install_dir if self.settings.os == "Linux" else self.root
-        self.copy(pattern="*.h", dst="include", src=os.path.join(include_dir, "include"))
-        if self.settings.os != "Windows":
-            self.copy(pattern="*.pc", dst="res", src=os.path.join(self.install_dir, "lib"))
-            self.copy(pattern="*.la", dst="lib", src=os.path.join(self.install_dir, "lib"), keep_path=False)
-        if self.options.shared:
-            if self.settings.os == "Windows":
-                self.copy(pattern="*.dll", dst="bin", src=os.path.join(self.root, str(self.settings.build_type)), keep_path=False)
-                self.copy(pattern="libuv.pdb", dst="lib", src=os.path.join(self.root, str(self.settings.build_type)), keep_path=False)
-                self.copy(pattern="libuv.lib", dst="lib", src=os.path.join(self.root, str(self.settings.build_type)), keep_path=False)
-            elif self.settings.os == "Linux":
-                self.copy(pattern="*.so*", dst="lib", src=os.path.join(self.install_dir, "lib"), keep_path=False)
-            elif self.settings.os == "Macos":
-                self.copy(pattern="*.dylib", dst="lib", src=os.path.join(self.install_dir, "lib"), keep_path=False)
-        else:
-            if self.settings.os == "Windows":
-                self.copy(pattern="*.lib", dst="lib", src=os.path.join(self.root, str(self.settings.build_type), "lib"), keep_path=False)
-            else:
-                self.copy(pattern="*.a", dst="lib", src=os.path.join(self.install_dir, "lib"), keep_path=False)
 
     def package_info(self):
         if self.options.shared:
