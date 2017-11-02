@@ -56,12 +56,25 @@ class LibuvConan(ConanFile):
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
             self.copy(pattern="*.lib", dst="lib", src=bin_dir, keep_path=False)
+        elif str(self.settings.os) in ['Linux', 'Android']:
+            if self.options.shared:
+                self.copy(pattern="*.so*", dst="lib", src=bin_dir, keep_path=False)
+            else:
+                self.copy(pattern="*.a", dst="lib", src=bin_dir, keep_path=False)
+        elif str(self.settings.os) in ['Macos', 'iOS', 'watchOS', 'tvOS']:
+            if self.options.shared:
+                self.copy(pattern="*.dylib*", dst="lib", src=bin_dir, keep_path=False)
+            else:
+                self.copy(pattern="*.a", dst="lib", src=bin_dir, keep_path=False)
 
     def package_info(self):
-        if self.options.shared:
-            self.cpp_info.libs = ['libuv.dll.lib']
+        if self.settings.os == "Windows":
+            if self.options.shared:
+                self.cpp_info.libs = ['libuv.dll.lib']
+            else:
+                self.cpp_info.libs = ['libuv']
         else:
-            self.cpp_info.libs = ['libuv']
+            self.cpp_info.libs = ['uv']
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("pthread")
         elif self.settings.os == "Windows":
