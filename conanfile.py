@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import tempfile
-from conans import ConanFile, AutoToolsBuildEnvironment, tools
+import os
+from conans import ConanFile, tools
 
 
 class LibuvConan(ConanFile):
@@ -58,12 +58,14 @@ class LibuvConan(ConanFile):
             self.copy(pattern="*.lib", dst="lib", src=bin_dir, keep_path=False)
         elif str(self.settings.os) in ['Linux', 'Android']:
             if self.options.shared:
-                self.copy(pattern="*.so*", dst="lib", src=bin_dir, keep_path=False)
+                self.copy(pattern="libuv.so.1", dst="lib", src=os.path.join(bin_dir, "lib"), keep_path=False)
+                lib_dir = os.path.join(self.package_folder, "lib")
+                os.symlink(os.path.join(lib_dir, "libuv.so.1"), os.path.join(lib_dir, "libuv.so"))
             else:
                 self.copy(pattern="*.a", dst="lib", src=bin_dir, keep_path=False)
         elif str(self.settings.os) in ['Macos', 'iOS', 'watchOS', 'tvOS']:
             if self.options.shared:
-                self.copy(pattern="*.dylib*", dst="lib", src=bin_dir, keep_path=False)
+                self.copy(pattern="*.dylib", dst="lib", src=bin_dir, keep_path=False)
             else:
                 self.copy(pattern="*.a", dst="lib", src=bin_dir, keep_path=False)
 
@@ -73,9 +75,8 @@ class LibuvConan(ConanFile):
                 self.cpp_info.libs = ['libuv.dll.lib']
             else:
                 self.cpp_info.libs = ['libuv']
+            self.cpp_info.libs.extend(["Psapi", "Ws2_32", "Iphlpapi", "Userenv"])
         else:
-            self.cpp_info.libs = ['uv']
+            self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("pthread")
-        elif self.settings.os == "Windows":
-            self.cpp_info.libs.extend(["Psapi", "Ws2_32", "Iphlpapi", "Userenv"])
