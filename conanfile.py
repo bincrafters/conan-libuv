@@ -12,9 +12,9 @@ class LibuvConan(ConanFile):
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
+    default_options = "shared=True"
     url = "https://github.com/bincrafters/conan-libuv"
-    description = "Cross-platform asynchronous I/O "
+    description = "Cross-platform asynchronous I/O"
     license = "https://github.com/libuv/libuv/blob/master/LICENSE"
     exports = "LICENSE"
     root = name + "-" + version
