@@ -71,10 +71,7 @@ class LibuvConan(ConanFile):
 
     def package_info(self):
         if self.settings.os == "Windows":
-            if self.options.shared:
-                self.cpp_info.libs = ['libuv.dll.lib']
-            else:
-                self.cpp_info.libs = ['libuv']
+            self.cpp_info.libs = ['libuv.dll.lib' if self.options.shared else 'libuv']
             self.cpp_info.libs.extend(["Psapi", "Ws2_32", "Iphlpapi", "Userenv"])
         else:
             self.cpp_info.libs = tools.collect_libs(self)
