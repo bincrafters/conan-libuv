@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import tempfile
 import os
 from conans import ConanFile, tools
+from conans.errors import ConanException
 
 
 class LibuvConan(ConanFile):
@@ -21,7 +21,7 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
-        if self.settings.compiler == "Visual Studio" and self.settings.compiler.version < "14":
+        if self.settings.compiler == "Visual Studio" and int(str(self.settings.compiler.version)) < 14:
             raise ConanException("Visual Studio >= 14 (2015) is required")
 
     def source(self):
