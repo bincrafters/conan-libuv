@@ -21,6 +21,8 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        if self.settings.compiler == "Visual Studio" and self.settings.compiler.version < "14":
+            raise ConanException("Visual Studio >= 14 (2015) is required")
 
     def source(self):
         source_url = "https://github.com/libuv/libuv"
@@ -34,13 +36,7 @@ class LibuvConan(ConanFile):
         with tools.chdir(self.root):
             env_vars = dict()
             if self.settings.compiler == "Visual Studio":
-                env_vars['GYP_MSVS_VERSION'] = {'7': '2003',
-                                                '8': '2005',
-                                                '9': '2008',
-                                                '10': '2010',
-                                                '11': '2012',
-                                                '12': '2013',
-                                                '14': '2015',
+                env_vars['GYP_MSVS_VERSION'] = {'14': '2015',
                                                 '15': '2017'}.get(str(self.settings.compiler.version))
             with tools.environment_append(env_vars):
                 target_arch = {'x86': 'ia32', 'x86_64': 'x64'}.get(str(self.settings.arch))
