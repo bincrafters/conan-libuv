@@ -18,7 +18,6 @@ class LibuvConan(ConanFile):
     license = "https://github.com/libuv/libuv/blob/master/LICENSE"
     exports = "LICENSE"
     root = name + "-" + version
-    install_dir = tempfile.mkdtemp(prefix=root)
 
     def configure(self):
         del self.settings.compiler.libcxx
