@@ -9,14 +9,14 @@ from conans.errors import ConanException
 class LibuvConan(ConanFile):
     name = "libuv"
     version = "1.15.0"
+    description = "Cross-platform asynchronous I/O "
+    url = "https://github.com/bincrafters/conan-libuv"
+    license = "MIT"
+    exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    url = "https://github.com/bincrafters/conan-libuv"
-    description = "Cross-platform asynchronous I/O "
-    license = "https://github.com/libuv/libuv/blob/master/LICENSE"
-    exports = "LICENSE"
     root = name + "-" + version
 
     def configure(self):
