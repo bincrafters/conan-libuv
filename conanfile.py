@@ -28,10 +28,6 @@ class LibuvConan(ConanFile):
         source_url = "https://github.com/libuv/libuv"
         tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
 
-    def build_requirements(self):
-        self.build_requires("ninja_installer/1.8.2@bincrafters/testing")
-        self.build_requires("gyp_installer/20171101@bincrafters/testing")
-
     def build(self):
         with tools.chdir(self.root):
             env_vars = dict()
