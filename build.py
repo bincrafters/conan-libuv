@@ -7,7 +7,7 @@ from bincrafters import build_shared
 import os
 
 def add_build_requires(builds):
-    if os.environ['MINGW_CONFIGURATIONS']:
+    if os.getenv('MINGW_CONFIGURATIONS', ''):
         return map(add_required_installers, builds)
     else:
         return builds
