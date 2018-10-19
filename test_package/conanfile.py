@@ -12,10 +12,5 @@ class TestPackageConan(ConanFile):
         cmake.build()
         
     def test(self):
-        with tools.environment_append(RunEnvironment(self).vars):
-            if self.settings.os == "Windows":
-                self.run(os.path.join("bin","test_package"))
-            elif self.settings.os == "Macos":
-                self.run("DYLD_LIBRARY_PATH=%s %s"%(os.environ.get('DYLD_LIBRARY_PATH', ''),os.path.join("bin","test_package")))
-            else:
-                self.run("LD_LIBRARY_PATH=%s %s"%(os.environ.get('LD_LIBRARY_PATH', ''),os.path.join("bin","test_package")))
+        test_package = os.path.join("bin","test_package")
+        self.run(test_package, run_environment=True)
