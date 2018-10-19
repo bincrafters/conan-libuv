@@ -11,13 +11,15 @@ class LibuvConan(ConanFile):
     version = "1.15.0"
     description = "Cross-platform asynchronous I/O "
     url = "https://github.com/bincrafters/conan-libuv"
+    homepage = "https://github.com/libuv/libuv"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "MIT"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
-    root = name + "-" + version
+    default_options = {"shared": False}
+    _root_folder = name + "-" + version
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -25,11 +27,10 @@ class LibuvConan(ConanFile):
             raise ConanException("Visual Studio >= 14 (2015) is required")
 
     def source(self):
-        source_url = "https://github.com/libuv/libuv"
-        tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
+        tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
 
     def build(self):
-        with tools.chdir(self.root):
+        with tools.chdir(self._root_folder):
             env_vars = dict()
             if self.settings.compiler == "Visual Studio":
                 env_vars['GYP_MSVS_VERSION'] = {'14': '2015',
@@ -41,8 +42,8 @@ class LibuvConan(ConanFile):
                 self.run('ninja -C out/%s' % self.settings.build_type)
 
     def package(self):
-        self.copy(pattern="*.h", dst="include", src=os.path.join(self.root, 'include'))
-        bin_dir = os.path.join(self.root, 'out', str(self.settings.build_type))
+        self.copy(pattern="*.h", dst="include", src=os.path.join(self._root_folder, 'include'))
+        bin_dir = os.path.join(self._root_folder, 'out', str(self.settings.build_type))
         if self.settings.os == "Windows":
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
