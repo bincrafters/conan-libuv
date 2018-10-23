@@ -23,7 +23,8 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
-        if self.settings.compiler == "Visual Studio" and int(self.settings.compiler.version) < 14:
+        if self.settings.compiler == "Visual Studio" \
+            and int(str(self.settings.compiler.version)) < 14:
             raise ConanInvalidConfiguration("Visual Studio >= 14 (2015) is required")
 
     def source(self):
@@ -39,9 +40,9 @@ class LibuvConan(ConanFile):
             env_vars = dict()
             if self.settings.compiler == "Visual Studio":
                 env_vars["GYP_MSVS_VERSION"] = {"14": "2015",
-                                                "15": "2017"}.get(self.settings.compiler.version)
+                                                "15": "2017"}.get(str(self.settings.compiler.version))
             with tools.environment_append(env_vars):
-                target_arch = {"x86": "ia32", "x86_64": "x64"}.get(self.settings.arch)
+                target_arch = {"x86": "ia32", "x86_64": "x64"}.get(str(self.settings.arch))
                 uv_library = "shared_library" if self.options.shared else "static_library"
                 self.run("python gyp_uv.py -f ninja -Dtarget_arch=%s -Duv_library=%s"
                          % (target_arch, uv_library))
@@ -49,7 +50,7 @@ class LibuvConan(ConanFile):
 
     def package(self):
         self.copy(pattern="*.h", dst="include", src=os.path.join(self._root_folder, "include"))
-        bin_dir = os.path.join(self._root_folder, "out", self.settings.build_type)
+        bin_dir = os.path.join(self._root_folder, "out", str(self.settings.build_type))
         if self.settings.os == "Windows":
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
