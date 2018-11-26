@@ -8,7 +8,7 @@ from conans.errors import ConanInvalidConfiguration
 
 class LibuvConan(ConanFile):
     name = "libuv"
-    version = "1.23.2"
+    version = "1.24.0"
     description = "Cross-platform asynchronous I/O "
     url = "https://github.com/bincrafters/conan-libuv"
     homepage = "https://github.com/libuv/libuv"
