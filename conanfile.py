@@ -31,7 +31,7 @@ class LibuvConan(ConanFile):
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
 
     def build_requirements(self):
-        self.build_requires("gyp_installer/20181120@bincrafters/stable")
+        self.build_requires("gyp_installer/20181217@bincrafters/stable")
         if not tools.which("ninja"):
             self.build_requires("ninja_installer/1.8.2@bincrafters/stable")
 
