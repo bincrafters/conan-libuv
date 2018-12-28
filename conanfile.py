@@ -26,6 +26,11 @@ class LibuvConan(ConanFile):
         if self.settings.compiler == "Visual Studio" and int(str(self.settings.compiler.version)) < 14:
             raise ConanException("Visual Studio >= 14 (2015) is required")
 
+    def build_requirements(self):
+        self.build_requires("gyp_installer/20181217@bincrafters/stable")
+        if not tools.which("ninja"):
+            self.build_requires("ninja_installer/1.8.2@bincrafters/stable")
+
     def source(self):
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
 
