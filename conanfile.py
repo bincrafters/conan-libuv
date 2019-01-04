@@ -13,6 +13,7 @@ class LibuvConan(ConanFile):
     url = "https://github.com/bincrafters/conan-libuv"
     homepage = "https://github.com/libuv/libuv"
     author = "Bincrafters <bincrafters@gmail.com>"
+    topics = ("conan", "libuv", "io", "async", "event")
     license = "MIT"
     exports = ["LICENSE.md"]
     settings = "os", "arch", "compiler", "build_type"
@@ -49,6 +50,7 @@ class LibuvConan(ConanFile):
                 self.run("ninja -C out/%s" % self.settings.build_type)
 
     def package(self):
+        self.copy(pattern="LICENSE*", dst="licenses", src=self._root_folder)
         self.copy(pattern="*.h", dst="include", src=os.path.join(self._root_folder, "include"))
         bin_dir = os.path.join(self._root_folder, "out", str(self.settings.build_type))
         if self.settings.os == "Windows":
