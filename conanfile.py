@@ -8,7 +8,7 @@ from conans.errors import ConanInvalidConfiguration
 
 class LibuvConan(ConanFile):
     name = "libuv"
-    version = "1.24.0"
+    version = "1.25.0"
     description = "Cross-platform asynchronous I/O "
     url = "https://github.com/bincrafters/conan-libuv"
     homepage = "https://github.com/libuv/libuv"
@@ -20,7 +20,7 @@ class LibuvConan(ConanFile):
     generators = "cmake"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    _root_folder = name + "-" + version
+    _source_subfolder = "source_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -29,7 +29,10 @@ class LibuvConan(ConanFile):
             raise ConanInvalidConfiguration("Visual Studio >= 14 (2015) is required")
 
     def source(self):
-        tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
+        sha256 = "ce3036d444c3fb4f9a9e2994bec1f4fa07872b01456998b422ce918fdc55c254"
+        tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version), sha256=sha256)
+        extracted_folder = self.name + "-" + self.version
+        os.rename(extracted_folder, self._source_subfolder)
 
     def build_requirements(self):
         self.build_requires("gyp_installer/20181217@bincrafters/stable")
@@ -37,7 +40,7 @@ class LibuvConan(ConanFile):
             self.build_requires("ninja_installer/1.8.2@bincrafters/stable")
 
     def build(self):
-        with tools.chdir(self._root_folder):
+        with tools.chdir(self._source_subfolder):
             env_vars = dict()
             if self.settings.compiler == "Visual Studio":
                 env_vars["GYP_MSVS_VERSION"] = {"14": "2015",
@@ -50,9 +53,9 @@ class LibuvConan(ConanFile):
                 self.run("ninja -C out/%s" % self.settings.build_type)
 
     def package(self):
-        self.copy(pattern="LICENSE*", dst="licenses", src=self._root_folder)
-        self.copy(pattern="*.h", dst="include", src=os.path.join(self._root_folder, "include"))
-        bin_dir = os.path.join(self._root_folder, "out", str(self.settings.build_type))
+        self.copy(pattern="LICENSE*", dst="licenses", src=self._source_subfolder)
+        self.copy(pattern="*.h", dst="include", src=os.path.join(self._source_subfolder, "include"))
+        bin_dir = os.path.join(self._source_subfolder, "out", str(self.settings.build_type))
         if self.settings.os == "Windows":
             if self.options.shared:
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
