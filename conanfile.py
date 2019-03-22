@@ -29,7 +29,7 @@ class LibuvConan(ConanFile):
             raise ConanInvalidConfiguration("Visual Studio >= 14 (2015) is required")
 
     def source(self):
-        sha256 = "ce3036d444c3fb4f9a9e2994bec1f4fa07872b01456998b422ce918fdc55c254"
+        sha256 = "4afcdc84cd315b77c8e532e7b3fde43d536af0e2e835eafbd0e75518ed26dbed"
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         extracted_folder = self.name + "-" + self.version
         os.rename(extracted_folder, self._source_subfolder)
