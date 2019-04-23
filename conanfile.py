@@ -35,7 +35,7 @@ class LibuvConan(ConanFile):
         os.rename(extracted_folder, self._source_subfolder)
 
     def build_requirements(self):
-        self.build_requires("gyp_installer/20181217@bincrafters/stable")
+        self.build_requires("gyp_installer/20190423@bincrafters/stable")
         if not tools.which("ninja"):
             self.build_requires("ninja_installer/1.8.2@bincrafters/stable")
 
