@@ -44,7 +44,8 @@ class LibuvConan(ConanFile):
             env_vars = dict()
             if self.settings.compiler == "Visual Studio":
                 env_vars["GYP_MSVS_VERSION"] = {"14": "2015",
-                                                "15": "2017"}.get(str(self.settings.compiler.version))
+                                                "15": "2017",
+                                                "16": "2019"}.get(str(self.settings.compiler.version))
             with tools.environment_append(env_vars):
                 target_arch = {"x86": "ia32", "x86_64": "x64"}.get(str(self.settings.arch))
                 uv_library = "shared_library" if self.options.shared else "static_library"
