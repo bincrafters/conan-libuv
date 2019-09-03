@@ -4,11 +4,12 @@
 import os
 from conans import ConanFile, tools, CMake
 from conans.errors import ConanInvalidConfiguration
+from conans.tools import Version
 
 
 class LibuvConan(ConanFile):
     name = "libuv"
-    version = "1.27.0"
+    version = "1.31.0"
     description = "Cross-platform asynchronous I/O "
     url = "https://github.com/bincrafters/conan-libuv"
     homepage = "https://github.com/libuv/libuv"
@@ -30,6 +31,11 @@ class LibuvConan(ConanFile):
     def _is_mingw(self):
         return self.settings.os == "Windows" and self.settings.compiler != "Visual Studio"
 
+    @property
+    def _is_msvc16(self):
+        return self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and \
+            Version(self.settings.compiler.version) == "16"
+
     def configure(self):
         del self.settings.compiler.libcxx
         if self.settings.compiler == "Visual Studio" \
@@ -37,7 +43,7 @@ class LibuvConan(ConanFile):
             raise ConanInvalidConfiguration("Visual Studio >= 14 (2015) is required")
 
     def source(self):
-        sha256 = "4afcdc84cd315b77c8e532e7b3fde43d536af0e2e835eafbd0e75518ed26dbed"
+        sha256 = "ab041ea5d1965a33d4e03ea87718b8922ba4e54abb46c71cf9e040edef2556c0"
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         extracted_folder = self.name + "-" + self.version
         os.rename(extracted_folder, self._source_subfolder)
@@ -53,7 +59,8 @@ class LibuvConan(ConanFile):
         return cmake
 
     def build(self):
-        if self._is_mingw:
+        # TODO: GYP is not supported by MSVC 16
+        if self._is_mingw or self._is_msvc16:
             cmake = self._configure_cmake()
             cmake.build()
         else:
