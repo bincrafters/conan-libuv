@@ -85,8 +85,10 @@ class LibuvConan(ConanFile):
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
                 self.copy(pattern="*.dll", dst="bin", src="bin")
                 self.copy(pattern="libuv.dll.a", dst="lib", src="lib")
+                self.copy(pattern="uv.lib", dst="lib", src="lib")
             else:
                 self.copy(pattern="libuv_a.a", dst="lib", src="lib")
+                self.copy(pattern="uv_a.lib", dst="lib", src="lib")
             self.copy(pattern="*.lib", dst="lib", src=bin_dir, keep_path=False)
         elif str(self.settings.os) in ["Linux", "Android"]:
             if self.options.shared:
@@ -106,6 +108,8 @@ class LibuvConan(ConanFile):
         if self.settings.os == "Windows":
             if self._is_mingw:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "uv_a"]
+            elif self._is_msvc16:
+                self.cpp_info.libs = ["uv" if self.options.shared else "uv_a"]
             else:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "libuv"]
             self.cpp_info.libs.extend(["Psapi", "Ws2_32", "Iphlpapi", "Userenv"])
