@@ -108,7 +108,7 @@ class LibuvConan(ConanFile):
         if self.settings.os == "Windows":
             if self._is_mingw:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "uv_a"]
-            if self._is_msvc16:
+            elif self._is_msvc16:
                 self.cpp_info.libs = ["uv" if self.options.shared else "uv_a"]
             else:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "libuv"]
