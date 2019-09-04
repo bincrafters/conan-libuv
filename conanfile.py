@@ -4,6 +4,7 @@
 import os
 from conans import ConanFile, tools, CMake
 from conans.errors import ConanInvalidConfiguration
+from conans.tools import Version
 
 
 class LibuvConan(ConanFile):
@@ -30,6 +31,12 @@ class LibuvConan(ConanFile):
     def _is_mingw(self):
         return self.settings.os == "Windows" and self.settings.compiler != "Visual Studio"
 
+    @property
+    def _is_msvc16(self):
+        # TODO: GYP is not supported by MSVC 16
+        return self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and \
+               Version(self.settings.compiler.version) == "16"
+
     def configure(self):
         del self.settings.compiler.libcxx
         if self.settings.compiler == "Visual Studio" \
@@ -53,7 +60,7 @@ class LibuvConan(ConanFile):
         return cmake
 
     def build(self):
-        if self._is_mingw:
+        if self._is_mingw or self._is_msvc16:
             cmake = self._configure_cmake()
             cmake.build()
         else:
@@ -78,8 +85,10 @@ class LibuvConan(ConanFile):
                 self.copy(pattern="*.dll", dst="bin", src=bin_dir, keep_path=False)
                 self.copy(pattern="*.dll", dst="bin", src="bin")
                 self.copy(pattern="libuv.dll.a", dst="lib", src="lib")
+                self.copy(pattern="uv.lib", dst="lib", src="lib")
             else:
                 self.copy(pattern="libuv_a.a", dst="lib", src="lib")
+                self.copy(pattern="uv_a.lib", dst="lib", src="lib")
             self.copy(pattern="*.lib", dst="lib", src=bin_dir, keep_path=False)
         elif str(self.settings.os) in ["Linux", "Android"]:
             if self.options.shared:
@@ -99,6 +108,8 @@ class LibuvConan(ConanFile):
         if self.settings.os == "Windows":
             if self._is_mingw:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "uv_a"]
+            elif self._is_msvc16:
+                self.cpp_info.libs = ["uv" if self.options.shared else "uv_a"]
             else:
                 self.cpp_info.libs = ["libuv.dll.lib" if self.options.shared else "libuv"]
             self.cpp_info.libs.extend(["Psapi", "Ws2_32", "Iphlpapi", "Userenv"])
