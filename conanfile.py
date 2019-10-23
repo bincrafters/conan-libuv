@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 from conans import ConanFile, tools, CMake
 from conans.errors import ConanInvalidConfiguration
@@ -38,6 +35,7 @@ class LibuvConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
         if self.settings.compiler == "Visual Studio" \
             and int(str(self.settings.compiler.version)) < 14:
             raise ConanInvalidConfiguration("Visual Studio >= 14 (2015) is required")
@@ -51,7 +49,7 @@ class LibuvConan(ConanFile):
     def build_requirements(self):
         self.build_requires("gyp_installer/20190423@bincrafters/stable")
         if not tools.which("ninja"):
-            self.build_requires("ninja_installer/1.8.2@bincrafters/stable")
+            self.build_requires("ninja/1.9.0")
 
     def _configure_cmake(self):
         cmake = CMake(self)
