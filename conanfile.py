@@ -10,7 +10,6 @@ class LibuvConan(ConanFile):
     description = "Cross-platform asynchronous I/O "
     url = "https://github.com/bincrafters/conan-libuv"
     homepage = "https://github.com/libuv/libuv"
-    author = "Bincrafters <bincrafters@gmail.com>"
     topics = ("conan", "libuv", "io", "async", "event")
     license = "MIT"
     exports = ["LICENSE.md"]
